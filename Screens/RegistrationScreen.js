@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useFonts } from "expo-font";
+import { useNavigation } from "@react-navigation/native";
 import {
   Text,
   View,
@@ -14,6 +15,7 @@ import {
   Alert,
 } from "react-native";
 export default function RegistrationScreen() {
+  const navigation = useNavigation();
   const [login, setLogin] = useState("".trim());
   const [email, setEmail] = useState("".trim());
   const [password, setPassword] = useState("".trim());
@@ -29,6 +31,7 @@ export default function RegistrationScreen() {
       Alert.alert("Please fill all necessary field to process your data");
       return;
     }
+    navigation.navigate("Home", { screen: "Posts" });
     console.log(`Your login: ${login}`);
     console.log(`Your email: ${email}`);
     console.log(`Your password: ${password}`);
@@ -63,8 +66,16 @@ export default function RegistrationScreen() {
             <TouchableOpacity style={styles.button} onPress={outputData}>
               <Text style={styles.buttonText}>Sign up</Text>
             </TouchableOpacity>
-
-            <Text style={styles.refText}>Already have account? Sign in</Text>
+            <Text style={styles.refText}>
+              Already have account?
+              <Text
+                style={styles.link}
+                onPress={() => navigation.navigate("Login")}
+              >
+                {" "}
+                Sign in
+              </Text>
+            </Text>
           </View>
         </ImageBackground>
       </View>
@@ -121,6 +132,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontFamily: "Roboto-Regular",
     fontSize: 16,
+  },
+  link: {
+    color: "#1B4371",
+    textAlign: "center",
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
+    fontStyle: "normal",
+    textDecorationLine: "underline",
   },
   refText: {
     color: "#1B4371",

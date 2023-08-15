@@ -1,7 +1,7 @@
 import React from "react";
 import { useFonts } from "expo-font";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
-export default function PostsScreen() {
+export default function MapScreen() {
   const [fontsLoaded] = useFonts({
     "Roboto-Medium": require("../assets/fonts/Roboto-Medium.otf"),
     "Roboto-Regular": require("../assets/fonts/Roboto-Regular.otf"),
@@ -10,8 +10,8 @@ export default function PostsScreen() {
     return null;
   }
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Publications</Text>
+    <View>
+      <Text>Map</Text>
     </View>
   );
 }

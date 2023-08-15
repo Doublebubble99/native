@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import {
   Text,
@@ -13,6 +14,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 export default function LoginScreen() {
+  const navigation = useNavigation();
   const [email, setEmail] = useState("".trim());
   const [password, setPassword] = useState("".trim());
   const [fontsLoaded] = useFonts({
@@ -27,6 +29,7 @@ export default function LoginScreen() {
       Alert.alert("Please fill all necessary field to process your data");
       return;
     }
+    navigation.navigate("Home", { screen: "Posts" });
     console.log(`Your email: ${email}`);
     console.log(`Your password: ${password}`);
   };
@@ -36,25 +39,35 @@ export default function LoginScreen() {
         <ImageBackground imageStyle source={require("./bg-photo.png")}>
           <View style={styles.container}>
             <Text style={styles.title}>Log in</Text>
-            <KeyboardAvoidingView enabled={false}>
-              <TextInput
-                placeholder="Email address"
-                style={styles.input}
-                value={email}
-                onChangeText={setEmail}
-              />
-              <TextInput
-                placeholder="Password"
-                style={styles.input}
-                value={password}
-                onChangeText={setPassword}
-              />
+            <KeyboardAvoidingView behavior="position">
+              <View>
+                <TextInput
+                  placeholder="Email address"
+                  style={styles.input}
+                  value={email}
+                  onChangeText={setEmail}
+                />
+              </View>
+              <View>
+                <TextInput
+                  placeholder="Password"
+                  style={styles.input}
+                  value={password}
+                  onChangeText={setPassword}
+                />
+              </View>
             </KeyboardAvoidingView>
             <TouchableOpacity style={styles.button} onPress={outputData}>
               <Text style={styles.buttonText}>Log in</Text>
             </TouchableOpacity>
             <Text style={styles.refText}>
-              Don't have account? <Text style={styles.underlined}>Sign up</Text>
+              Don't have account?{" "}
+              <Text
+                style={styles.link}
+                onPress={() => navigation.navigate("Register")}
+              >
+                Sign up
+              </Text>
             </Text>
           </View>
         </ImageBackground>
@@ -69,6 +82,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     color: "#212121",
@@ -119,7 +133,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontStyle: "normal",
   },
-  underlined: {
+  link: {
+    color: "#1B4371",
+    textAlign: "center",
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
+    fontStyle: "normal",
     textDecorationLine: "underline",
   },
 });
