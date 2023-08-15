@@ -37,49 +37,61 @@ export default function RegistrationScreen() {
     console.log(`Your password: ${password}`);
   };
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View>
-        <ImageBackground imageStyle source={require("./bg-photo.png")}>
-          <View style={styles.container}>
-            <Image source={require("./photo.png")} style={styles.image} />
-            <Text style={styles.title}>Registration</Text>
-            <KeyboardAvoidingView>
-              <TextInput
-                placeholder="Login"
-                value={login}
-                style={styles.input}
-                onChangeText={setLogin}
-              />
-              <TextInput
-                placeholder="Email address"
-                value={email}
-                style={styles.input}
-                onChangeText={setEmail}
-              />
-              <TextInput
-                placeholder="Password"
-                value={password}
-                style={styles.input}
-                onChangeText={setPassword}
-              />
-            </KeyboardAvoidingView>
-            <TouchableOpacity style={styles.button} onPress={outputData}>
-              <Text style={styles.buttonText}>Sign up</Text>
-            </TouchableOpacity>
-            <Text style={styles.refText}>
-              Already have account?
-              <Text
-                style={styles.link}
-                onPress={() => navigation.navigate("Login")}
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: "#fff",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <View>
+          <ImageBackground imageStyle source={require("./bg-photo.png")}>
+            <View style={styles.container}>
+              <Image source={require("./photo.png")} style={styles.image} />
+              <KeyboardAvoidingView
+                behavior={Platform.OS == "ios" ? "padding" : "height"}
               >
-                {" "}
-                Sign in
+                <Text style={styles.title}>Registration</Text>
+
+                <TextInput
+                  placeholder="Login"
+                  value={login}
+                  style={styles.input}
+                  onChangeText={setLogin}
+                />
+                <TextInput
+                  placeholder="Email address"
+                  value={email}
+                  style={styles.input}
+                  onChangeText={setEmail}
+                />
+                <TextInput
+                  placeholder="Password"
+                  value={password}
+                  style={styles.input}
+                  onChangeText={setPassword}
+                />
+              </KeyboardAvoidingView>
+              <TouchableOpacity style={styles.button} onPress={outputData}>
+                <Text style={styles.buttonText}>Sign up</Text>
+              </TouchableOpacity>
+              <Text style={styles.refText}>
+                Already have account?
+                <Text
+                  style={styles.link}
+                  onPress={() => navigation.navigate("Login")}
+                >
+                  {" "}
+                  Sign in
+                </Text>
               </Text>
-            </Text>
-          </View>
-        </ImageBackground>
-      </View>
-    </TouchableWithoutFeedback>
+            </View>
+          </ImageBackground>
+        </View>
+      </TouchableWithoutFeedback>
+    </View>
   );
 }
 const styles = StyleSheet.create({

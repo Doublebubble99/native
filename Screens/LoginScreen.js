@@ -34,45 +34,54 @@ export default function LoginScreen() {
     console.log(`Your password: ${password}`);
   };
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View>
-        <ImageBackground imageStyle source={require("./bg-photo.png")}>
-          <View style={styles.container}>
-            <Text style={styles.title}>Log in</Text>
-            <KeyboardAvoidingView behavior="position">
-              <View>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: "#fff",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <View>
+          <ImageBackground imageStyle source={require("./bg-photo.png")}>
+            <View style={styles.container}>
+              <KeyboardAvoidingView
+                behavior={Platform.OS == "ios" ? "padding" : "height"}
+              >
+                <Text style={styles.title}>Log in</Text>
+
                 <TextInput
                   placeholder="Email address"
                   style={styles.input}
                   value={email}
                   onChangeText={setEmail}
                 />
-              </View>
-              <View>
+
                 <TextInput
                   placeholder="Password"
                   style={styles.input}
                   value={password}
                   onChangeText={setPassword}
                 />
-              </View>
-            </KeyboardAvoidingView>
-            <TouchableOpacity style={styles.button} onPress={outputData}>
-              <Text style={styles.buttonText}>Log in</Text>
-            </TouchableOpacity>
-            <Text style={styles.refText}>
-              Don't have account?{" "}
-              <Text
-                style={styles.link}
-                onPress={() => navigation.navigate("Register")}
-              >
-                Sign up
+              </KeyboardAvoidingView>
+              <TouchableOpacity style={styles.button} onPress={outputData}>
+                <Text style={styles.buttonText}>Log in</Text>
+              </TouchableOpacity>
+              <Text style={styles.refText}>
+                Don't have account?{" "}
+                <Text
+                  style={styles.link}
+                  onPress={() => navigation.navigate("Register")}
+                >
+                  Sign up
+                </Text>
               </Text>
-            </Text>
-          </View>
-        </ImageBackground>
-      </View>
-    </TouchableWithoutFeedback>
+            </View>
+          </ImageBackground>
+        </View>
+      </TouchableWithoutFeedback>
+    </View>
   );
 }
 const styles = StyleSheet.create({
