@@ -63,6 +63,7 @@ export default function LoginScreen() {
                   style={styles.input}
                   value={password}
                   onChangeText={setPassword}
+                  secureTextEntry={true}
                 />
               </KeyboardAvoidingView>
               <TouchableOpacity style={styles.button} onPress={outputData}>

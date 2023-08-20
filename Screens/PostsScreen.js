@@ -1,6 +1,8 @@
 import React from "react";
 import { useFonts } from "expo-font";
+import { useRoute } from "@react-navigation/native";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+
 export default function PostsScreen() {
   const [fontsLoaded] = useFonts({
     "Roboto-Medium": require("../assets/fonts/Roboto-Medium.otf"),
@@ -9,9 +11,12 @@ export default function PostsScreen() {
   if (!fontsLoaded) {
     return null;
   }
+  const {
+    params: { location },
+  } = useRoute();
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Publications</Text>
+      <Text>{location}</Text>
     </View>
   );
 }

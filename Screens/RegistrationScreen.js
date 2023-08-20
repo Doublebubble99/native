@@ -72,6 +72,7 @@ export default function RegistrationScreen() {
                   value={password}
                   style={styles.input}
                   onChangeText={setPassword}
+                  secureTextEntry={true}
                 />
               </KeyboardAvoidingView>
               <TouchableOpacity style={styles.button} onPress={outputData}>

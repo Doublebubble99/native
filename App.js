@@ -1,5 +1,5 @@
 import "react-native-gesture-handler";
-
+import { PROVIDER_GOOGLE } from "react-native-maps";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import RegistrationScreen from "./Screens/RegistrationScreen";
