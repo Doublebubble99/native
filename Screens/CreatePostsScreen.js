@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
+import * as Location from "expo-location";
 import { useFonts } from "expo-font";
 import {
   Text,
@@ -12,11 +12,13 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from "react-native";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
-export default function CreatePostsScreen() {
-  const navigation = useNavigation();
-  const [location, setLocation] = useState("");
+export default function CreatePostsScreen({ navigation }) {
+  const [address, setAddress] = useState(null);
+  const [name, setName] = useState(null);
+  const [location, setLocation] = useState(null);
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
@@ -93,6 +95,8 @@ export default function CreatePostsScreen() {
                     fontFamily: "Roboto-Regular",
                     width: "100%",
                   }}
+                  onChange={setName}
+                  value={name}
                   textAlign="left"
                   placeholderTextColor="#BDBDBD"
                 />
@@ -101,10 +105,10 @@ export default function CreatePostsScreen() {
                 <Ionicons name="location-outline" size={24} color="#BDBDBD" />
                 <TextInput
                   placeholder="location..."
-                  onChange={setLocation}
+                  onChange={setAddress}
                   textAlign="left"
                   placeholderTextColor="#BDBDBD"
-                  value={location}
+                  value={address}
                   style={{
                     color: "#212121",
                     fontSize: 16,
@@ -116,7 +120,24 @@ export default function CreatePostsScreen() {
             </KeyboardAvoidingView>
             <TouchableOpacity
               style={styles.submitButton}
-              onPress={() => navigation.navigate("Posts", { location })}
+              onPress={async () => {
+                const { status } =
+                  await Location.requestForegroundPermissionsAsync();
+                if (status !== "granted") {
+                  Alert.alert("Location resolve was denied");
+                  return;
+                }
+                let location = await Location.getCurrentPositionAsync({});
+                const coords = {
+                  latitude: location.coords.latitude,
+                  longitude: location.coords.longitude,
+                };
+                setLocation(coords);
+                navigation.navigate("Home", {
+                  screen: "Posts",
+                  params: { name, address, location },
+                });
+              }}
             >
               <Text style={styles.submitText}>Publicate</Text>
             </TouchableOpacity>
