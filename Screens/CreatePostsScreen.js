@@ -16,9 +16,10 @@ import {
 } from "react-native";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 export default function CreatePostsScreen({ navigation }) {
-  const [address, setAddress] = useState(null);
-  const [name, setName] = useState(null);
+  const [address, setAddress] = useState("".trim());
+  const [name, setName] = useState("".trim());
   const [location, setLocation] = useState(null);
+  const [imgUri, setImgUri] = useState("");
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
@@ -44,7 +45,6 @@ export default function CreatePostsScreen({ navigation }) {
   if (hasPermission === false) {
     return <Text style={styles.cameraText}>No access to camera</Text>;
   }
-
   return (
     <View style={styles.container}>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -57,6 +57,7 @@ export default function CreatePostsScreen({ navigation }) {
                   onPress={async () => {
                     if (cameraRef) {
                       const { uri } = await cameraRef.takePictureAsync();
+                      setImgUri(uri);
                       await MediaLibrary.createAssetAsync(uri);
                     }
                   }}
@@ -95,7 +96,7 @@ export default function CreatePostsScreen({ navigation }) {
                     fontFamily: "Roboto-Regular",
                     width: "100%",
                   }}
-                  onChange={setName}
+                  onChangeText={setName}
                   value={name}
                   textAlign="left"
                   placeholderTextColor="#BDBDBD"
@@ -105,7 +106,7 @@ export default function CreatePostsScreen({ navigation }) {
                 <Ionicons name="location-outline" size={24} color="#BDBDBD" />
                 <TextInput
                   placeholder="location..."
-                  onChange={setAddress}
+                  onChangeText={setAddress}
                   textAlign="left"
                   placeholderTextColor="#BDBDBD"
                   value={address}
@@ -121,21 +122,21 @@ export default function CreatePostsScreen({ navigation }) {
             <TouchableOpacity
               style={styles.submitButton}
               onPress={async () => {
-                const { status } =
+                let { status } =
                   await Location.requestForegroundPermissionsAsync();
                 if (status !== "granted") {
                   Alert.alert("Location resolve was denied");
-                  return;
+                  return null;
                 }
                 let location = await Location.getCurrentPositionAsync({});
-                const coords = {
-                  latitude: location.coords.latitude,
-                  longitude: location.coords.longitude,
-                };
-                setLocation(coords);
+                setLocation(location);
+                if (!name && !address) {
+                  Alert.alert("Please enter all necessary fields");
+                  return;
+                }
                 navigation.navigate("Home", {
                   screen: "Posts",
-                  params: { name, address, location },
+                  params: { name, address, imgUri, location },
                 });
               }}
             >
@@ -153,7 +154,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 32,
+    top: 0,
+    position: "relative",
   },
   cameraView: {
     marginBottom: 32,
