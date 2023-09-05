@@ -14,11 +14,14 @@ import {
   TouchableWithoutFeedback,
   Alert,
 } from "react-native";
+import { useDispatch } from "react-redux";
+import { signUpUser } from "../redux/auth/authOperations";
 export default function RegistrationScreen() {
   const navigation = useNavigation();
   const [login, setLogin] = useState("".trim());
   const [email, setEmail] = useState("".trim());
   const [password, setPassword] = useState("".trim());
+  const dispatch = useDispatch();
   const [fontsLoaded] = useFonts({
     "Roboto-Medium": require("../assets/fonts/Roboto-Medium.otf"),
     "Roboto-Regular": require("../assets/fonts/Roboto-Regular.otf"),
@@ -26,15 +29,16 @@ export default function RegistrationScreen() {
   if (!fontsLoaded) {
     return null;
   }
-  const outputData = () => {
+  const createUserEmailAndPassword = () => {
     if (!login || !password || !email) {
       Alert.alert("Please fill all necessary field to process your data");
       return;
     }
-    navigation.navigate("Home", { screen: "Posts" });
-    console.log(`Your login: ${login}`);
-    console.log(`Your email: ${email}`);
-    console.log(`Your password: ${password}`);
+    dispatch(signUpUser({ login, email, password }));
+    navigation.navigate("Home", {
+      screen: "Posts",
+      params: { login, email },
+    });
   };
   return (
     <View
@@ -47,9 +51,15 @@ export default function RegistrationScreen() {
     >
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View>
-          <ImageBackground imageStyle source={require("./bg-photo.png")}>
+          <ImageBackground
+            imageStyle
+            source={require("../assets/bg-photo.png")}
+          >
             <View style={styles.container}>
-              <Image source={require("./photo.png")} style={styles.image} />
+              <Image
+                source={require("../assets/photo.png")}
+                style={styles.image}
+              />
               <KeyboardAvoidingView
                 behavior={Platform.OS == "ios" ? "padding" : "height"}
               >
@@ -75,7 +85,10 @@ export default function RegistrationScreen() {
                   secureTextEntry={true}
                 />
               </KeyboardAvoidingView>
-              <TouchableOpacity style={styles.button} onPress={outputData}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={createUserEmailAndPassword}
+              >
                 <Text style={styles.buttonText}>Sign up</Text>
               </TouchableOpacity>
               <Text style={styles.refText}>

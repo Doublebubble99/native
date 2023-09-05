@@ -1,4 +1,5 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
 import { useFonts } from "expo-font";
@@ -7,8 +8,10 @@ import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import PostsScreen from "./PostsScreen";
 import CreatePostsScreen from "./CreatePostsScreen";
 import ProfileScreen from "./ProfileScreen";
+import { userSignOut } from "../redux/auth/authOperations";
 const BottomTabs = createBottomTabNavigator();
 export default function Home() {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const [fontsLoaded] = useFonts({
     "Roboto-Medium": require("../assets/fonts/Roboto-Medium.otf"),
@@ -17,6 +20,10 @@ export default function Home() {
   if (!fontsLoaded) {
     return null;
   }
+  const signOut = () => {
+    dispatch(userSignOut());
+    navigation.navigate("Register");
+  };
   return (
     <BottomTabs.Navigator
       initialRouteName="Posts"
@@ -43,7 +50,7 @@ export default function Home() {
                 name="logout"
                 size={24}
                 color={color}
-                onPress={() => navigation.navigate("Register")}
+                onPress={signOut}
               />
             );
           },

@@ -13,10 +13,14 @@ import {
   Alert,
   TouchableWithoutFeedback,
 } from "react-native";
+import { useDispatch } from "react-redux";
+import { signInUser } from "../redux/auth/authOperations";
+import { auth } from "../config";
 export default function LoginScreen() {
   const navigation = useNavigation();
   const [email, setEmail] = useState("".trim());
   const [password, setPassword] = useState("".trim());
+  const dispatch = useDispatch();
   const [fontsLoaded] = useFonts({
     "Roboto-Medium": require("../assets/fonts/Roboto-Medium.otf"),
     "Roboto-Regular": require("../assets/fonts/Roboto-Regular.otf"),
@@ -24,14 +28,13 @@ export default function LoginScreen() {
   if (!fontsLoaded) {
     return null;
   }
-  const outputData = () => {
+  const signInUserEmailAndPassword = () => {
     if (!email || !password) {
       Alert.alert("Please fill all necessary field to process your data");
       return;
     }
-    navigation.navigate("Home", { screen: "Posts" });
-    console.log(`Your email: ${email}`);
-    console.log(`Your password: ${password}`);
+    dispatch(signInUser({ email, password }));
+    navigation.navigate("Home", { screen: "Posts", params: { email } });
   };
   return (
     <View
@@ -44,7 +47,10 @@ export default function LoginScreen() {
     >
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View>
-          <ImageBackground imageStyle source={require("./bg-photo.png")}>
+          <ImageBackground
+            imageStyle
+            source={require("../assets/bg-photo.png")}
+          >
             <View style={styles.container}>
               <KeyboardAvoidingView
                 behavior={Platform.OS == "ios" ? "padding" : "height"}
@@ -66,7 +72,10 @@ export default function LoginScreen() {
                   secureTextEntry={true}
                 />
               </KeyboardAvoidingView>
-              <TouchableOpacity style={styles.button} onPress={outputData}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={signInUserEmailAndPassword}
+              >
                 <Text style={styles.buttonText}>Log in</Text>
               </TouchableOpacity>
               <Text style={styles.refText}>

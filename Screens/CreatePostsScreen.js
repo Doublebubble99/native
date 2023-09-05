@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
+import { nanoid } from "nanoid";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { collection, addDoc } from "firebase/firestore";
+import { storage, db } from "../config";
 import { useFonts } from "expo-font";
 import {
   Text,
@@ -23,6 +28,7 @@ export default function CreatePostsScreen({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
+  const { userId, login } = useSelector((state) => state.users);
   const [fontsLoaded] = useFonts({
     "Roboto-Medium": require("../assets/fonts/Roboto-Medium.otf"),
     "Roboto-Regular": require("../assets/fonts/Roboto-Regular.otf"),
@@ -35,6 +41,42 @@ export default function CreatePostsScreen({ navigation }) {
       setHasPermission(status === "granted");
     })();
   }, []);
+  const uploadPost = async () => {
+    try {
+      const uniquePostId = nanoid();
+      const imageRef = await ref(storage, `postsImage/${uniquePostId}`);
+      const response = await fetch(imgUri);
+      const blob = await response.blob();
+      await uploadBytes(imageRef, blob);
+      await addDoc(collection(db, "posts"), {
+        address,
+        name,
+        userId,
+        login,
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  const handlePostsData = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Location resolve was denied");
+      return null;
+    }
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
+    if (!name && !address) {
+      Alert.alert("Please enter all necessary fields");
+      return;
+    }
+    await uploadPost();
+    navigation.navigate("Home", {
+      screen: "Posts",
+      params: { name, address, imgUri, location },
+    });
+  };
+
   if (!fontsLoaded) {
     return null;
   }
@@ -57,6 +99,7 @@ export default function CreatePostsScreen({ navigation }) {
                   onPress={async () => {
                     if (cameraRef) {
                       const { uri } = await cameraRef.takePictureAsync();
+                      console.log(uri);
                       setImgUri(uri);
                       await MediaLibrary.createAssetAsync(uri);
                     }
@@ -66,21 +109,6 @@ export default function CreatePostsScreen({ navigation }) {
                     <FontAwesome name="camera" size={24} color="#FFFFFF" />
                   </View>
                 </TouchableOpacity>
-                {/* <TouchableOpacity
-            style={styles.flipContainer}
-            onPress={() => {
-              setType(
-                type === Camera.Constants.Type.back
-                  ? Camera.Constants.Type.front
-                  : Camera.Constants.Type.back
-              );
-            }}
-          >
-            <Text style={{ fontSize: 18, marginBottom: 10, color: "white" }}>
-              {" "}
-              Flip{" "}
-            </Text>
-          </TouchableOpacity> */}
               </View>
             </Camera>
             <Text style={styles.cameraText}>Upload photo</Text>
@@ -121,24 +149,7 @@ export default function CreatePostsScreen({ navigation }) {
             </KeyboardAvoidingView>
             <TouchableOpacity
               style={styles.submitButton}
-              onPress={async () => {
-                let { status } =
-                  await Location.requestForegroundPermissionsAsync();
-                if (status !== "granted") {
-                  Alert.alert("Location resolve was denied");
-                  return null;
-                }
-                let location = await Location.getCurrentPositionAsync({});
-                setLocation(location);
-                if (!name && !address) {
-                  Alert.alert("Please enter all necessary fields");
-                  return;
-                }
-                navigation.navigate("Home", {
-                  screen: "Posts",
-                  params: { name, address, imgUri, location },
-                });
-              }}
+              onPress={handlePostsData}
             >
               <Text style={styles.submitText}>Publicate</Text>
             </TouchableOpacity>

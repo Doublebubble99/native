@@ -11,7 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.doublebubble99.native"
@@ -33,8 +35,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "b36a73e3-4bfa-4fa1-9f3a-ff7148f0e2d0"
+        "projectId": "d387eac8-9cba-4a4f-b103-8fbf8937867c"
       }
-    }
+    },
+    "owner": "testuser99"
   }
 }

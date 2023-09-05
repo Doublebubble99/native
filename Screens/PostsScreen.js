@@ -1,52 +1,79 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useFonts } from "expo-font";
 import { Feather, Ionicons } from "@expo/vector-icons";
-import { Text, View, StyleSheet, Image } from "react-native";
-
+import { Text, View, StyleSheet, Image, FlatList } from "react-native";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../config";
 export default function PostsScreen({ route, navigation }) {
-  const name = route.params?.name;
-  const address = route.params?.address;
-  const location = route.params?.location;
-  const imgUri = route.params?.imgUri;
+  const [posts, setPosts] = useState([]);
+  const login = route.params?.login;
+  const email = route.params?.email;
   const [fontsLoaded] = useFonts({
     "Roboto-Medium": require("../assets/fonts/Roboto-Medium.otf"),
     "Roboto-Regular": require("../assets/fonts/Roboto-Regular.otf"),
   });
+  useEffect(() => {
+    getAllposts();
+    console.log(posts);
+  }, []);
+  const getAllposts = async () => {
+    const snapshots = await getDocs(collection(db, "posts"));
+    const allPosts = snapshots.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id,
+    }));
+    setPosts(allPosts);
+  };
+
   if (!fontsLoaded) {
     return null;
   }
   return (
     <View style={{ flex: 1, alignItems: "center", marginTop: 32 }}>
-      <View style={{ width: 343, height: 240 }}>
-        {imgUri && (
-          <Image borderRadius={8} height={240} source={{ uri: imgUri }} />
-        )}
+      <View>
+        <Text>{login}</Text>
+        <Text>{email}</Text>
       </View>
-      {name && <Text style={styles.nameText}>{name}</Text>}
-      <View style={styles.iconsView}>
-        {name && (
-          <View style={styles.messageWrap}>
-            <Feather
-              name="message-circle"
-              size={24}
-              color="#BDBDBD"
-              onPress={() => navigation.navigate("Comments")}
-            />
-            <Text style={styles.messageText}>0</Text>
+      <FlatList
+        data={posts}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <View>
+            <View style={{ width: 343, height: 240 }}>
+              <Image
+                borderRadius={8}
+                height={240}
+                source={{ uri: item.imgUri }}
+              />
+            </View>
+            <Text style={styles.nameText}>{item.name}</Text>
+            <View style={styles.iconsView}>
+              <View style={styles.messageWrap}>
+                <Feather
+                  name="message-circle"
+                  size={24}
+                  color="#BDBDBD"
+                  onPress={() =>
+                    navigation.navigate("Comments", { postId: item.id })
+                  }
+                />
+                <Text style={styles.messageText}>0</Text>
+              </View>
+              <View style={styles.locationWrap}>
+                <Ionicons
+                  name="location-outline"
+                  size={24}
+                  color="#BDBDBD"
+                  onPress={() =>
+                    navigation.navigate("Map", { location: item.location })
+                  }
+                />
+                <Text style={styles.locationText}>{item.address}</Text>
+              </View>
+            </View>
           </View>
         )}
-        {address && (
-          <View style={styles.locationWrap}>
-            <Ionicons
-              name="location-outline"
-              size={24}
-              color="#BDBDBD"
-              onPress={() => navigation.navigate("Map", { location })}
-            />
-            <Text style={styles.locationText}>{address}</Text>
-          </View>
-        )}
-      </View>
+      />
     </View>
   );
 }

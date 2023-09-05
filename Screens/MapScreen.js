@@ -4,7 +4,9 @@ import MapView, { Marker } from "react-native-maps";
 import { Text, View, StyleSheet, Dimensions } from "react-native";
 
 export default function MapScreen({ route }) {
-  const location = route.params?.location;
+  const {
+    coords: { longitude, latitude },
+  } = route.params?.location;
   const [fontsLoaded] = useFonts({
     "Roboto-Medium": require("../assets/fonts/Roboto-Medium.otf"),
     "Roboto-Regular": require("../assets/fonts/Roboto-Regular.otf"),
@@ -19,16 +21,16 @@ export default function MapScreen({ route }) {
         region={{
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
+          latitude: latitude,
+          longitude: longitude,
         }}
         style={styles.mapStyle}
       >
         <Marker
           title="You are here"
           coordinate={{
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
+            latitude: latitude,
+            longitude: longitude,
           }}
         />
       </MapView>
